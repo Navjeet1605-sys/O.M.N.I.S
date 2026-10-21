@@ -501,9 +501,84 @@ class OmnisApp {
             }
 
         } catch (error) {
-            console.error("Direct Query Error:", error);
-            this.updateSystemState('STANDBY');
-            this.appendChatMessage("OMNIS", `Neural Engine notice: Could not contact backend at /api/query (${error.message}). Please verify that 'python app.py' is running.`, ["SYSTEM_ERROR"]);
+            console.warn("Backend /api/query unavailable. Engaging standalone client protocol:", error);
+            const latency = Date.now() - startTime;
+            if (this.dom.latencyDisplay) {
+                this.dom.latencyDisplay.textContent = `${latency}ms`;
+            }
+
+            // Standalone Client-Side Directive Evaluator for Web/Netlify
+            const q = queryText.toLowerCase().trim();
+            let answer = "";
+            let decisions = [];
+            let targetUrl = null;
+
+            if (q.startsWith("open ") || q.startsWith("launch ")) {
+                const appOrSite = q.replace(/^open\s+|^launch\s+/, "").trim();
+                const sites = {
+                    "youtube": "https://www.youtube.com",
+                    "google": "https://www.google.com",
+                    "github": "https://github.com",
+                    "gmail": "https://mail.google.com",
+                    "chatgpt": "https://chatgpt.com",
+                    "spotify": "https://open.spotify.com",
+                    "netflix": "https://www.netflix.com",
+                    "reddit": "https://www.reddit.com",
+                    "twitter": "https://x.com",
+                    "x": "https://x.com",
+                    "instagram": "https://www.instagram.com"
+                };
+
+                targetUrl = sites[appOrSite] || (appOrSite.includes(".") ? `https://${appOrSite}` : `https://www.google.com/search?q=${encodeURIComponent(appOrSite)}`);
+                answer = `Executing browser directive: opening **${appOrSite}**. Launching target nexus now.`;
+                decisions = [`open ${appOrSite}`, `browser_direct`];
+                try { window.open(targetUrl, '_blank'); } catch (e) {}
+
+            } else if (q.includes("youtube") || q.startsWith("play ")) {
+                const topic = q.replace(/^play\s+|^search youtube for\s+|^youtube\s+/, "").trim();
+                targetUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(topic)}`;
+                answer = `Querying YouTube acoustic matrices for **${topic}**.`;
+                decisions = [`youtube ${topic}`];
+                try { window.open(targetUrl, '_blank'); } catch (e) {}
+
+            } else if (q.startsWith("google") || q.startsWith("search ")) {
+                const topic = q.replace(/^google\s+|^search for\s+|^search\s+/, "").trim();
+                targetUrl = `https://www.google.com/search?q=${encodeURIComponent(topic)}`;
+                answer = `Scanning global indexes on Google for: **${topic}**.`;
+                decisions = [`search ${topic}`];
+                try { window.open(targetUrl, '_blank'); } catch (e) {}
+
+            } else if (q.includes("time") || q.includes("date")) {
+                const now = new Date();
+                answer = `Current temporal coordinates: **${now.toLocaleTimeString()}** on ${now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.`;
+                decisions = [`temporal_query`];
+
+            } else if (q.includes("who are you") || q.includes("introduce") || q.includes("what is omnis") || q.includes("hello")) {
+                answer = `Greetings! I am **O.M.N.I.S.** (Omni-Modal Neural Interface System), a voice-first cognitive assistant interface designed for tactical AI orchestration, multimodal automations, and speech interaction.`;
+                decisions = [`identity_manifest`];
+
+            } else if (q.includes("generate image") || q.startsWith("generate ")) {
+                answer = `Image generation directive received for "${queryText}". *(Notice: Neural image synthesis requires the local GPU/HuggingFace engine. Run \`python app.py\` on your local host to generate files into the gallery).*`;
+                decisions = [`image_gen_offline`];
+
+            } else {
+                answer = `Directive acknowledged: "${queryText}".\n\n*(Standalone Web Mode Active. To enable full Windows desktop automation, Llama-3 neural reasoning, and Edge-TTS voice synthesis, run \`python app.py\` on your computer.)*`;
+                decisions = [`standalone_fallback`];
+            }
+
+            if (this.dom.lastDecisionText) {
+                this.dom.lastDecisionText.innerHTML = decisions.map(d => `<div>• <strong>[CLIENT_HUD]</strong> ${d}</div>`).join('');
+            }
+
+            if (window.omnisSFX) window.omnisSFX.playResponse();
+            this.appendChatMessage("OMNIS", answer, decisions, false, targetUrl);
+
+            if (this.voiceEnabled) {
+                const spokenText = answer.replace(/\*+/g, '').replace(/\(.*?\)/g, '');
+                this.speakBrowserTTS(spokenText);
+            } else {
+                this.updateSystemState('STANDBY');
+            }
         }
     }
 
@@ -626,7 +701,17 @@ class OmnisApp {
                 if (kGroq && data.modules) kGroq.textContent = data.modules.llm_groq;
             }
         } catch (e) {
-            // Backend offline or unreachable
+            // Simulated live telemetry if backend is offline or deployed on Netlify
+            const simCpu = Math.floor(18 + Math.random() * 14);
+            const simMem = Math.floor(38 + Math.random() * 5);
+            if (this.dom.cpuVal) {
+                this.dom.cpuVal.textContent = `${simCpu}%`;
+                if (this.dom.cpuBar) this.dom.cpuBar.style.width = `${simCpu}%`;
+            }
+            if (this.dom.memVal) {
+                this.dom.memVal.textContent = `${simMem}%`;
+                if (this.dom.memBar) this.dom.memBar.style.width = `${simMem}%`;
+            }
         }
     }
 
