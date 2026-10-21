@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O.M.N.I.S. | Omni-Modal Neural Interface System</title>
+    <!-- Google Fonts: Orbitron for Sci-Fi HUD, Rajdhani for technical readouts, Inter for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Background Grid & Cyber Atmosphere -->
+    <div class="cyber-grid"></div>
+    <div class="scanlines"></div>
+    <div class="ambient-glow cyan-glow"></div>
+    <div class="ambient-glow purple-glow"></div>
+
+    <!-- MAIN HUD WRAPPER -->
+    <div class="hud-container">
+        
+        <!-- TOP HUD NAVIGATION -->
+        <header class="hud-header">
+            <div class="brand-zone">
+                <div class="reactor-mini-icon">
+                    <div class="mini-core"></div>
+                </div>
+                <div class="brand-text">
+                    <h1 class="system-title">O.M.N.I.S.<span class="version-tag">v3.4 CORE</span></h1>
+                    <span class="system-subtitle">OMNI-MODAL NEURAL INTERFACE SYSTEM</span>
+                </div>
+            </div>
+
+            <!-- Central HUD Status Readout -->
+            <div class="hud-status-banner">
+                <div class="status-indicator-pill" id="systemStatusPill">
+                    <span class="status-dot pulsing"></span>
+                    <span class="status-label" id="systemStatusLabel">CORE ONLINE</span>
+                </div>
+                <div class="engine-state-badge" id="engineStateBadge">STANDBY</div>
+            </div>
+
+            <!-- Header Telemetry & Quick Action Icons -->
+            <div class="header-controls">
+                <div class="telemetry-chip">
+                    <span class="chip-icon">⏱</span>
+                    <span id="hudClock">00:00:00</span>
+                </div>
+                <div class="telemetry-chip">
+                    <span class="chip-icon">⚡</span>
+                    <span id="latencyDisplay">18ms</span>
+                </div>
+                
+                <button class="hud-icon-btn" id="sfxToggleBtn" title="Toggle UI Cyber Sound Effects">
+                    <span class="btn-icon">🔊</span>
+                </button>
+                <button class="hud-icon-btn" id="voiceToggleBtn" title="Toggle Assistant Voice Output">
+                    <span class="btn-icon">🗣️</span>
+                </button>
+                <button class="hud-icon-btn" id="settingsBtn" title="System Settings">
+                    <span class="btn-icon">⚙️</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN 3-COLUMN DECK -->
+        <main class="hud-main-deck">
+            
+            <!-- ================= LEFT COLUMN: TELEMETRY & AUTOMATION HUB ================= -->
+            <aside class="hud-panel left-panel">
+                <div class="panel-header">
+                    <span class="panel-tag">SEC-01 // DIAGNOSTICS</span>
+                    <h2 class="panel-title">SYSTEM TELEMETRY</h2>
+                </div>
+
+                <!-- Telemetry Gauges -->
+                <div class="telemetry-grid">
+                    <div class="gauge-card">
+                        <div class="gauge-header">
+                            <span>NEURAL LOAD</span>
+                            <span class="gauge-val" id="cpuVal">18%</span>
+                        </div>
+                        <div class="gauge-bar-track">
+                            <div class="gauge-bar-fill" id="cpuBar" style="width: 18%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="gauge-card">
+                        <div class="gauge-header">
+                            <span>MEMORY BUFFER</span>
+                            <span class="gauge-val" id="memVal">42%</span>
+                        </div>
+                        <div class="gauge-bar-track">
+                            <div class="gauge-bar-fill purple-fill" id="memBar" style="width: 42%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="gauge-card">
+                        <div class="gauge-header">
+                            <span>DMM CONFIDENCE</span>
+                            <span class="gauge-val" id="dmmVal">99.4%</span>
+                        </div>
+                        <div class="gauge-bar-track">
+                            <div class="gauge-bar-fill green-fill" style="width: 99%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subsystem Matrix Status -->
+                <div class="subsystem-matrix">
+                    <div class="matrix-title">SUBSYSTEM STATUS</div>
+                    <div class="matrix-row">
+                        <span class="matrix-label">FirstLayerDMM</span>
+                        <span class="matrix-badge active" id="badgeDMM">ACTIVE</span>
+                    </div>
+                    <div class="matrix-row">
+                        <span class="matrix-label">Groq Llama-3</span>
+                        <span class="matrix-badge active" id="badgeGroq">CONNECTED</span>
+                    </div>
+                    <div class="matrix-row">
+                        <span class="matrix-label">DuckDuckGo Search</span>
+                        <span class="matrix-badge active" id="badgeDDG">ONLINE</span>
+                    </div>
+                    <div class="matrix-row">
+                        <span class="matrix-label">App Automation</span>
+                        <span class="matrix-badge active" id="badgeAuto">ENGAGED</span>
+                    </div>
+                    <div class="matrix-row">
+                        <span class="matrix-label">Edge-TTS Vocal</span>
+                        <span class="matrix-badge active" id="badgeTTS">SYNCHRONIZED</span>
+                    </div>
+                </div>
+
+                <!-- QUICK AUTOMATION TRIGGER MATRIX -->
+                <div class="automation-section">
+                    <div class="matrix-title">TACTICAL COMMANDS</div>
+                    <div class="automation-grid">
+                        <button class="auto-btn" data-cmd="open youtube">
+                            <span class="auto-icon">▶</span>
+                            <span>YouTube</span>
+                        </button>
+                        <button class="auto-btn" data-cmd="google search latest AI breakthroughs">
+                            <span class="auto-icon">🔍</span>
+                            <span>Google Search</span>
+                        </button>
+                        <button class="auto-btn" data-cmd="content Write a brief leave application">
+                            <span class="auto-icon">📝</span>
+                            <span>Draft Note</span>
+                        </button>
+                        <button class="auto-btn" data-cmd="generate image futuristic cybernetic AI core">
+                            <span class="auto-icon">🎨</span>
+                            <span>Generate Art</span>
+                        </button>
+                        <button class="auto-btn" data-cmd="volume up">
+                            <span class="auto-icon">🔊</span>
+                            <span>Volume Up</span>
+                        </button>
+                        <button class="auto-btn" data-cmd="open chrome">
+                            <span class="auto-icon">🌐</span>
+                            <span>Chrome</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Active Protocol Readout -->
+                <div class="decision-feed-box">
+                    <div class="matrix-title">LAST DMM DECISION VECTOR</div>
+                    <div class="decision-content" id="lastDecisionText">
+                        [STANDBY] Awaiting user prompt or vocal trigger...
+                    </div>
+                </div>
+            </aside>
+
+
+            <!-- ================= CENTER COLUMN: THE NEURAL CORE & VOICE HUD ================= -->
+            <section class="hud-panel center-panel">
+                <div class="core-header-overlay">
+                    <span class="core-state-indicator" id="coreStateIndicator">CORE ENGAGED // ACOUSTIC READY</span>
+                    <div class="core-sub-data">FREQ: 44.1 kHz | BITRATE: 320 KBPS</div>
+                </div>
+
+                <!-- HOLOGRAPHIC ARC REACTOR CANVAS CONTAINER -->
+                <div class="core-viewport">
+                    <!-- Dynamic Canvas for 3D Rings, Particles & Energy Field -->
+                    <canvas id="reactorCanvas" width="600" height="420"></canvas>
+
+                    <!-- Realtime Interactive Audio Waveform Canvas -->
+                    <div class="audio-wave-overlay">
+                        <canvas id="waveformCanvas" width="500" height="90"></canvas>
+                    </div>
+
+                    <!-- Glowing Arc Mic Trigger Button -->
+                    <div class="mic-trigger-container">
+                        <button class="arc-mic-button" id="micButton" title="Click or Press SPACE to Speak">
+                            <div class="mic-ripple-ring"></div>
+                            <div class="mic-icon-svg">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                    <line x1="12" y1="19" x2="12" y2="22"></line>
+                                </svg>
+                            </div>
+                        </button>
+                        <div class="mic-hint-tag" id="micHint">PRESS SPACE TO TALK</div>
+                    </div>
+                </div>
+
+                <!-- LIVE SPEECH TRANSCRIPTION BANNER -->
+                <div class="transcription-banner" id="transcriptionBanner">
+                    <span class="transcript-tag">SPEECH RECOGNITION //</span>
+                    <span class="transcript-text" id="liveTranscript">"Click the glowing Arc Mic or type below to activate OMNIS..."</span>
+                </div>
+
+                <!-- COMMAND / PROMPT INPUT BAR -->
+                <div class="command-deck">
+                    <form id="promptForm" class="command-form">
+                        <div class="input-glow-frame">
+                            <span class="prompt-prefix">OMNIS &gt;</span>
+                            <input 
+                                type="text" 
+                                id="promptInput" 
+                                placeholder="Enter directive or question (e.g. 'What is the price of Bitcoin today?')" 
+                                autocomplete="off"
+                                spellcheck="false"
+                            >
+                            <button type="button" class="form-icon-btn" id="inlineMicBtn" title="Toggle Speech Recognition">
+                                🎙️
+                            </button>
+                            <button type="submit" class="send-directive-btn" id="sendBtn">
+                                <span>EXECUTE</span>
+                                <span class="send-arrow">➔</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Quick Prompt Chips -->
+                    <div class="prompt-chips-tray">
+                        <button class="chip-item" data-prompt="Who is the CEO of Google and what is their net worth?">Who is CEO of Google?</button>
+                        <button class="chip-item" data-prompt="What is the current time and date?">Current Date & Time</button>
+                        <button class="chip-item" data-prompt="Generate image of futuristic neon cyberpunk city in rain">Cyberpunk City Render</button>
+                        <button class="chip-item" data-prompt="Open YouTube and search Interstellar soundtrack">Interstellar on YouTube</button>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ================= RIGHT COLUMN: CHAT STREAM & IMAGE GALLERY ================= -->
+            <aside class="hud-panel right-panel">
+                <!-- Panel Tabs -->
+                <div class="panel-tab-header">
+                    <button class="panel-tab active" id="tabChat" data-target="chatTab">
+                        <span class="tab-icon">💬</span> NEURAL CHAT
+                    </button>
+                    <button class="panel-tab" id="tabGallery" data-target="galleryTab">
+                        <span class="tab-icon">🖼️</span> RENDER GALLERY
+                    </button>
+                </div>
+
+                <!-- TAB 1: NEURAL CHAT STREAM -->
+                <div class="tab-view active" id="chatTab">
+                    <div class="chat-controls-bar">
+                        <span class="chat-count-label" id="messageCount">0 Directives Logged</span>
+                        <div class="chat-action-btns">
+                            <button class="mini-hud-btn" id="clearChatBtn" title="Clear Chat Log">CLEAR</button>
+                            <button class="mini-hud-btn" id="exportChatBtn" title="Export Chat History">EXPORT</button>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable Chat Stream Container -->
+                    <div class="chat-stream" id="chatStream">
+                        <!-- Welcome Message Card -->
+                        <div class="chat-message assistant-message">
+                            <div class="msg-header">
+                                <span class="msg-sender"><span class="sender-badge">OMNIS</span> NEURAL CORE</span>
+                                <span class="msg-time" id="welcomeTime">INITIALIZED</span>
+                            </div>
+                            <div class="msg-body">
+                                Systems fully synchronized. I am <strong>O.M.N.I.S.</strong>, your advanced Omni-Modal AI Assistant. You can speak to me in natural English or type queries to execute real-time searches, PC automations, code content, or neural image renders.
+                            </div>
+                            <div class="msg-footer">
+                                <span class="dmm-tag">[DMM: SYSTEM_ONLINE]</span>
+                                <button class="speech-replay-btn" data-text="Systems fully synchronized. I am OMNIS. How may I assist you today?">🔊 Listen</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: IMAGE GENERATION GALLERY -->
+                <div class="tab-view" id="galleryTab">
+                    <div class="gallery-controls-bar">
+                        <span>SYNTHESIZED RENDERS</span>
+                        <button class="mini-hud-btn" id="refreshGalleryBtn">REFRESH</button>
+                    </div>
+                    <div class="gallery-grid" id="galleryGrid">
+                        <!-- Populated dynamically via JS from /api/images -->
+                        <div class="gallery-empty-state" id="galleryEmpty">
+                            <span class="empty-icon">🎨</span>
+                            <p>No neural images rendered yet.<br>Try asking: <em>"Generate image of a neon cyber dragon"</em></p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- FOOTER HUD BAR -->
+        <footer class="hud-footer">
+            <div class="footer-left">
+                <span class="security-level">SECURITY LEVEL: ALPHA-1</span>
+                <span class="protocol-hash">HASH // 7F4A-E920-OMNIS</span>
+            </div>
+            <div class="footer-center">
+                <span>O.M.N.I.S. ADVANCED AGENTIC FRAMEWORK • VOICE-FIRST COGNITIVE ARCHITECTURE</span>
+            </div>
+            <div class="footer-right">
+                <span id="speechStateBadge" class="speech-idle">MIC: READY</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ================= SETTINGS MODAL ================= -->
+    <div class="hud-modal-overlay" id="settingsModal">
+        <div class="hud-modal-card">
+            <div class="modal-header">
+                <h3>SYSTEM CONFIGURATION</h3>
+                <button class="modal-close-btn" id="closeSettingsBtn">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>ASSISTANT CALLSIGN</label>
+                    <input type="text" id="configAssistantName" value="OMNIS">
+                </div>
+                <div class="form-group">
+                    <label>USER DESIGNATION</label>
+                    <input type="text" id="configUserName" value="Sir">
+                </div>
+                <div class="form-group">
+                    <label>SPEECH SYNTHESIS ENGINE</label>
+                    <select id="configVoiceEngine">
+                        <option value="edge">Edge-TTS (High Fidelity Neural Aria)</option>
+                        <option value="browser">Web Browser Speech Synthesis</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>SPEECH RECOGNITION LANGUAGE</label>
+                    <select id="configSpeechLang">
+                        <option value="en-US">English (United States)</option>
+                        <option value="en-GB">English (United Kingdom)</option>
+                        <option value="en-IN">English (India)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>ENVIRONMENT KEYS STATUS (.env)</label>
+                    <div class="keys-checklist">
+                        <div class="key-item">
+                            <span>Cohere API (Decision Model)</span>
+                            <span class="key-badge" id="keyCohere">CHECKING...</span>
+                        </div>
+                        <div class="key-item">
+                            <span>Groq API (Llama-3 LLM)</span>
+                            <span class="key-badge" id="keyGroq">CHECKING...</span>
+                        </div>
+                        <div class="key-item">
+                            <span>Hugging Face (Image Gen)</span>
+                            <span class="key-badge" id="keyHF">READY</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="hud-btn secondary" id="resetConfigBtn">Reset Defaults</button>
+                <button class="hud-btn primary" id="saveConfigBtn">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= IMAGE LIGHTBOX MODAL ================= -->
+    <div class="hud-modal-overlay" id="imageLightboxModal">
+        <div class="lightbox-content">
+            <button class="modal-close-btn lightbox-close" id="closeLightboxBtn">✕</button>
+            <img src="" alt="Neural Render" id="lightboxImage">
+            <div class="lightbox-caption" id="lightboxCaption">Generated Render</div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/audio-sfx.js"></script>
+    <script src="js/visualizer.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 import os
 
+# pyrefly: ignore[missing-import]
 from groq import Groq # Importing the Groq library to use its API.
 from json import load, dump # Importing functions to read and write JSON files.
 import datetime # Importing the datetime module for real-time date and time information.
@@ -16,12 +17,11 @@ env_vars = dotenv_values(".env")
 # Retrieve specific environment variables for username, assistant name, and API key.
 Username = env_vars.get("Username" )
 Assistantname = env_vars.get("Assistantname")
-# GroqAPIKey = env_vars.get("GroqAPIKey")
+GroqAPIKey = env_vars.get("GroqAPIKey") or os.environ.get("GroqAPIKey")
 
 # Initialize the Groq client using the provided API key.
 client = Groq(
-    # This is the default and can be omitted
-    api_key=os.environ.get("GroqAPIKey"),
+    api_key=GroqAPIKey,
 )
 
 

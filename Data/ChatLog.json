@@ -1,0 +1,26 @@
+[
+  {
+    "timestamp": "2026-10-21 23:14:26",
+    "user": "open youtube",
+    "assistant": "Opening https://www.youtube.com.",
+    "decision": [
+      "open youtube"
+    ]
+  },
+  {
+    "timestamp": "2026-10-21 23:14:35",
+    "user": "open github",
+    "assistant": "Opening https://github.com.",
+    "decision": [
+      "open github"
+    ]
+  },
+  {
+    "timestamp": "2026-10-21 23:14:36",
+    "user": "google search Artificial Intelligence",
+    "assistant": "Opening https://www.google.com/search?q=artificial%20intelligence.",
+    "decision": [
+      "google search Artificial Intelligence"
+    ]
+  }
+]

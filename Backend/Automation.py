@@ -49,8 +49,19 @@ SystemChatBot = [{
 
 # Function for Google Search
 def GoogleSearch(Topic):
-    search(Topic)
-    TextToSpeech(f"Searching {Topic} on Google")
+    try:
+        url = f"https://www.google.com/search?q={requests.utils.quote(Topic)}"
+        try:
+            webbrowser.open_new_tab(url)
+        except Exception:
+            pass
+        os.system(f'start "" "{url}"')
+    except Exception:
+        search(Topic)
+    try:
+        TextToSpeech(f"Searching {Topic} on Google")
+    except Exception:
+        pass
     return True
 
 # Function to create content using AI and save to a file
@@ -61,7 +72,7 @@ def Content(Topic):
     def ContentWriterAI(prompt):
         messages.append({"role": "user", "content": prompt})
         completion = client.chat.completions.create(
-            model="openai/gpt-oss-20b", messages=SystemChatBot + messages,
+            model="llama-3.3-70b-versatile", messages=SystemChatBot + messages,
             max_tokens=2048, temperature=0.7, top_p=1, stream=True, stop=None
         )
         answer = ""
@@ -84,14 +95,29 @@ def Content(Topic):
 
 # Function to search on YouTube
 def youtubeSearch(Topic):
-    webbrowser.open(f"https://www.youtube.com/results?search_query={Topic}")
-    TextToSpeech(f"Searching {Topic} on YouTube")
+    url = f"https://www.youtube.com/results?search_query={requests.utils.quote(Topic)}"
+    try:
+        webbrowser.open_new_tab(url)
+    except Exception:
+        pass
+    os.system(f'start "" "{url}"')
+    try:
+        TextToSpeech(f"Searching {Topic} on YouTube")
+    except Exception:
+        pass
     return True
 
 # Function to play a video on YouTube
 def PlayYoutube(query):
-    playonyt(query)
-    TextToSpeech(f"playing {query} on YouTube")
+    try:
+        playonyt(query)
+    except Exception:
+        url = f"https://www.youtube.com/results?search_query={requests.utils.quote(query)}"
+        os.system(f'start "" "{url}"')
+    try:
+        TextToSpeech(f"Playing {query} on YouTube")
+    except Exception:
+        pass
     return True
 
 
@@ -99,6 +125,48 @@ def PlayYoutube(query):
 def OpenApp(app):
     try:
         app = app.lower().strip()
+        
+        # Step 1: Check known websites and web platforms FIRST
+        websites = {
+            "youtube": "https://www.youtube.com",
+            "google": "https://www.google.com",
+            "gmail": "https://mail.google.com",
+            "chatgpt": "https://chatgpt.com",
+            "github": "https://github.com",
+            "instagram": "https://www.instagram.com",
+            "facebook": "https://www.facebook.com",
+            "whatsapp": "https://web.whatsapp.com",
+            "linkedin": "https://www.linkedin.com",
+            "amazon": "https://www.amazon.in",
+            "spotify": "https://open.spotify.com",
+            "netflix": "https://www.netflix.com",
+            "stackoverflow": "https://stackoverflow.com",
+            "reddit": "https://www.reddit.com",
+            "x": "https://x.com",
+            "twitter": "https://x.com"
+        }
+
+        target_url = None
+        if app in websites:
+            target_url = websites[app]
+        elif app.startswith("http://") or app.startswith("https://"):
+            target_url = app
+        elif any(app.endswith(tld) for tld in [".com", ".org", ".net", ".in", ".io", ".ai", ".co", ".gov", ".edu"]):
+            target_url = f"https://{app}"
+
+        # If a website/URL was matched, launch it in browser immediately!
+        if target_url:
+            try:
+                webbrowser.open_new_tab(target_url)
+            except Exception:
+                pass
+            os.system(f'start "" "{target_url}"')
+            try:
+                TextToSpeech(f"Opening {app}")
+            except Exception:
+                pass
+            return True
+
         if app in ["chrome", "google chrome", "browser"]:
             chrome_paths = [
                 r"C:\Program Files\Google\Chrome\Application\chrome.exe",
@@ -116,47 +184,37 @@ def OpenApp(app):
 
             # Fallback if Chrome is installed in a custom location
             webbrowser.open_new_tab("https://www.google.com")
+            os.system('start https://www.google.com')
             TextToSpeech("Chrome executable not found. Opening your default browser")
             return True
-        # Step 1: Check installed Windows applications
-        available_apps = give_appnames()
-        installed_apps = [name.lower() for name in available_apps]
 
-        if app in installed_apps:
-            appopen(app, match_closest=True)
-            TextToSpeech(f"Opening {app}")
+        # Step 2: Check installed Windows desktop applications
+        try:
+            available_apps = give_appnames()
+            installed_apps = [name.lower() for name in available_apps]
+
+            if app in installed_apps:
+                appopen(app, match_closest=True)
+                TextToSpeech(f"Opening {app}")
+                return True
+        except Exception as app_err:
+            print(f"[AppOpener Notice]: {app_err}")
+
+        # Try native Windows shell execution for commands like notepad, calc, etc.
+        try:
+            subprocess.Popen(["cmd", "/c", "start", app], shell=True)
+            TextToSpeech(f"Launching {app}")
             return True
+        except Exception:
+            pass
 
-        # Step 2: If app is not found, open its website
-        websites = {
-            "youtube": "https://www.youtube.com",
-            "google": "https://www.google.com",
-            "gmail": "https://mail.google.com",
-            "chatgpt": "https://chatgpt.com",
-            "github": "https://github.com",
-            "instagram": "https://www.instagram.com",
-            "facebook": "https://www.facebook.com",
-            "whatsapp": "https://web.whatsapp.com",
-            "linkedin": "https://www.linkedin.com",
-            "amazon": "https://www.amazon.in",
-            "spotify": "https://open.spotify.com",
-            "netflix": "https://www.netflix.com",
-            "stackoverflow": "https://stackoverflow.com",
-            "reddit": "https://www.reddit.com",
-            "x": "https://x.com"
-        }
-
-        if app in websites:
-            webbrowser.open_new_tab(websites[app])
-            TextToSpeech(f"Opening {app}")
-            return True
-
-        # Step 3: If no matching website exists, Google search
+        # Step 3: If no matching website or app exists, Google search
         search_url = (
             "https://www.google.com/search?q="
             + requests.utils.quote(app)
         )
         webbrowser.open_new_tab(search_url)
+        os.system(f'start "" "{search_url}"')
         TextToSpeech(f"Opening {app}")
         return True
 
